@@ -53,7 +53,6 @@ def timerCallBack(event):
         
  
     elif estado == 'estado_1':
-        #print('Ajustando rota')
        
         if min(scan.ranges[scan_len-5 : scan_len+5]) < 100:           
             estado = 'estado_2'
