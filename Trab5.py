@@ -22,7 +22,6 @@ scan = LaserScan()
 
 rospy.init_node('cmd_node')
 
-
 def getAngle(msg):
     quaternion = msg.pose.pose.orientation
     quat = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
