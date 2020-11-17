@@ -92,8 +92,8 @@ def timerCallBack(event):
 
         if read>100:
             estado = 'estado_1'       
-    printf(T)
-    printf(periodo)
+    print(T)
+    print(periodo)
     
     pub.publish(msg)
     
