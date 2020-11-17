@@ -10,13 +10,12 @@ periodo = 0.04494382022
 estado = "estado_1"
 velAng=0.5
 
-
-kp = 1
-ki = 0.5
-kd = 0.5
+kp = 0.6
+ki = 0.03
+kd = 0.03
 
 old_error = 0
-sumError = 0
+T = 0
 
 odom = Odometry()
 scan = LaserScan()
@@ -42,7 +41,7 @@ def scanCallBack(msg):
 
 
 def timerCallBack(event):
-    global old_error, sumError, estado, velAng
+    global old_error, T, estado, velAng
     
     setpoint = 0.5
     scan_len = len(scan.ranges)
@@ -54,12 +53,11 @@ def timerCallBack(event):
         
  
     elif estado == 'estado_1':
-        print('Ajustando rota')
+        #print('Ajustando rota')
        
-        if min(scan.ranges[scan_len-5 : scan_len+5]) < 100:
-           
+        if min(scan.ranges[scan_len-5 : scan_len+5]) < 100:           
             estado = 'estado_2'
-            old_error = sumError = 0
+            old_error = T = 0
             msg.angular.z = 0
         else:
             if min(scan.ranges[scan_len-15 : scan_len+15]) < 100:
@@ -68,39 +66,34 @@ def timerCallBack(event):
                 msg.angular.z = velAng
             
 
-    elif estado == 'estado_2':
- 
-    
+    elif estado == 'estado_2':    
         read = min(scan.ranges[scan_len-15 : scan_len+15])
         P=I=D=0
         if read < 100:
             error = -(setpoint - read)
-            varError = (error-old_error)/periodo
-            sumError+=error*periodo
+            delta_e = (error-old_error)/periodo
+            T+=error*periodo
             
             old_error = error   
             
             P = kp*error
-            I = ki*sumError
-            D = kd*varError
+            I = ki*T
+            D = kd*delta_e
         
-        control = P+I+D
-        print(read, P, I, D)
+        control = P+I+D      
         
         if control > 1:
             control = 1
         elif control < -1:
-            control = -1
-        
+            control = -1        
       
         msg.linear.x = control
         msg.angular.z = 0
 
-
         if read>100:
-            estado = 'estado_1'
-       
-    
+            estado = 'estado_1'       
+    printf(T)
+    printf(periodo)
     
     pub.publish(msg)
     
