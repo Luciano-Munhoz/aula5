@@ -80,7 +80,8 @@ def timerCallBack(event):
             I = ki*T
             D = kd*delta_e
         
-        control = P+I+D      
+        control = P+I+D 
+        print(read,P,I,D)
         
         if control > 1:
             control = 1
@@ -92,8 +93,7 @@ def timerCallBack(event):
 
         if read>100:
             estado = 'estado_1'       
-    print(T)
-    print(periodo)
+    
     
     pub.publish(msg)
     
